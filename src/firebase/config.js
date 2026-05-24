@@ -171,12 +171,20 @@ export const loginWithGoogle = async () => {
         return { exito: true, redireccion: true }
       } catch (redirectError) {
         console.error("Error en redirect de Google:", redirectError)
-        return { exito: false, mensaje: mapAuthErrorMessage(redirectError?.code) }
+        return {
+          exito: false,
+          codigo: redirectError?.code,
+          mensaje: mapAuthErrorMessage(redirectError?.code)
+        }
       }
     }
 
     console.error("Error:", error)
-    return { exito: false, mensaje: mapAuthErrorMessage(error?.code) }
+    return {
+      exito: false,
+      codigo: error?.code,
+      mensaje: mapAuthErrorMessage(error?.code)
+    }
   }
 }
 
@@ -216,7 +224,11 @@ export const registrarUsuario = async (nombre, email, password, telefono = "") =
     return { exito: true, usuario: usuarioData }
   } catch (error) {
     console.error("Error al registrar:", error)
-    return { exito: false, mensaje: mapAuthErrorMessage(error?.code) }
+    return {
+      exito: false,
+      codigo: error?.code,
+      mensaje: mapAuthErrorMessage(error?.code)
+    }
   }
 }
 
@@ -249,7 +261,11 @@ export const loginConEmail = async (email, password) => {
     }
   } catch (error) {
     console.error("Error al iniciar sesión:", error)
-    return { exito: false, mensaje: mapAuthErrorMessage(error?.code) }
+    return {
+      exito: false,
+      codigo: error?.code,
+      mensaje: mapAuthErrorMessage(error?.code)
+    }
   }
 }
 

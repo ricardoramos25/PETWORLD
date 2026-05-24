@@ -25,6 +25,21 @@ function LoginPage() {
     }
   }, [estaAutenticado, navigate])
 
+  const esErrorConfiguracionFirebase = (resultado) => {
+    const codigo = resultado?.codigo || ""
+    const mensaje = (resultado?.mensaje || "").toLowerCase()
+
+    return (
+      codigo === "auth/unauthorized-domain" ||
+      codigo === "auth/operation-not-allowed" ||
+      codigo === "auth/invalid-api-key" ||
+      codigo === "auth/app-not-authorized" ||
+      mensaje.includes("dominio no autorizado") ||
+      mensaje.includes("api key") ||
+      mensaje.includes("no esta autorizada")
+    )
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -48,6 +63,12 @@ function LoginPage() {
       clearFailedLoginAttempts()
       navigate("/")
     } else {
+      if (esErrorConfiguracionFirebase(resultado)) {
+        alert(resultado.mensaje || "Error de configuracion de Firebase")
+        setCargando(false)
+        return
+      }
+
       const state = registerFailedLoginAttempt()
       if (state.isLocked) {
         alert(`Demasiados intentos. Bloqueado por ${getLockTimeSeconds()}s.`)
@@ -75,6 +96,12 @@ function LoginPage() {
         clearFailedLoginAttempts()
         navigate("/")
       } else {
+        if (esErrorConfiguracionFirebase(resultado)) {
+          alert(resultado.mensaje || "Error de configuracion de Firebase")
+          setCargandoGoogle(false)
+          return
+        }
+
         const state = registerFailedLoginAttempt()
         if (state.isLocked) {
           alert(`Demasiados intentos. Bloqueado por ${getLockTimeSeconds()}s.`)
