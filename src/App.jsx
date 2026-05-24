@@ -308,7 +308,7 @@ function AppContent() {
 
 function App() {
   return (
-    <HashRouter basename={import.meta.env.BASE_URL}>
+    <HashRouter>
       <AuthProvider>
         <AppContent />
       </AuthProvider>
