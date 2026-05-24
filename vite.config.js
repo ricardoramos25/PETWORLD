@@ -15,6 +15,12 @@ export default defineConfig({
     reportCompressedSize: false,
     rollupOptions: {
       output: {
+        entryFileNames: 'assets/main.js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: (assetInfo) =>
+          assetInfo.name && assetInfo.name.endsWith('.css')
+            ? 'assets/main.css'
+            : 'assets/[name][extname]',
         manualChunks(id) {
           if (id.includes('node_modules/firebase')) return 'firebase'
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) return 'react'
