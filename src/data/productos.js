@@ -1,6 +1,12 @@
 // src/data/productos.js
 
-export const productos = [
+const withBaseUrl = (ruta) => {
+  if (typeof ruta !== "string") return ruta
+  if (ruta.startsWith("http") || !ruta.startsWith("/")) return ruta
+  return `${import.meta.env.BASE_URL}${ruta.slice(1)}`
+}
+
+const productosRaw = [
   // ========== JABONES ==========
   { id: 1, nombre: "Jabón Azufre", precio: 80, categoria: "jabones", imagen: "/productos/jabon_azufre.jpg.webp" },
   { id: 2, nombre: "Jabón de Avena", precio: 150, categoria: "jabones", imagen: "/productos/jabon_avena.jpg.webp" },
@@ -123,6 +129,11 @@ export const productos = [
   // ========== ALIMENTACION ==========
   { id: 80, nombre: "Platos para comida", precio: 180, categoria: "alimentacion", imagen: "/productos/PLATOS-METALICOS-PARA-PERRO.webp" }
 ]
+
+export const productos = productosRaw.map((producto) => ({
+  ...producto,
+  imagen: withBaseUrl(producto.imagen)
+}))
 
 // ========== CATEGORIAS ==========
 export const categorias = [
