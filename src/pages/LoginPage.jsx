@@ -94,6 +94,13 @@ function LoginPage() {
       const resultado = await loginConGoogle()
       if (resultado.exito) {
         clearFailedLoginAttempts()
+
+        // En flujo redirect, Firebase completa el login al volver al sitio.
+        if (resultado.redireccion) {
+          setCargandoGoogle(false)
+          return
+        }
+
         navigate("/")
       } else {
         if (esErrorConfiguracionFirebase(resultado)) {

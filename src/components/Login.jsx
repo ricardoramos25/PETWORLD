@@ -69,6 +69,13 @@ function Login({ onClose, onCambiarARegistro }) {
     
     if (resultado.exito) {
       clearFailedLoginAttempts()
+
+      // En flujo redirect, la autenticación finaliza cuando Google retorna al sitio.
+      if (resultado.redireccion) {
+        setCargando(false)
+        return
+      }
+
       onClose()
     } else {
       const state = registerFailedLoginAttempt()
