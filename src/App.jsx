@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useEffect } from "react"
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom"
+import { HashRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import Navbar from "./components/Navbar"
 import Footer from "./components/footer"
@@ -308,11 +308,11 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter basename={import.meta.env.BASE_URL}>
       <AuthProvider>
         <AppContent />
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
