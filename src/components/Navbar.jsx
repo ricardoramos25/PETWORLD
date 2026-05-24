@@ -24,11 +24,6 @@ function Navbar({ carrito, abrirCarrito }) {
   }
 
   const handleGoHome = () => {
-    if (window.location.pathname !== "/") {
-      window.location.href = "/"
-      return
-    }
-
     navigate("/", { replace: true })
     scrollToTop()
     requestAnimationFrame(scrollToTop)
