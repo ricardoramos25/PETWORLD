@@ -65,7 +65,7 @@ function Navbar({ carrito, abrirCarrito }) {
             className="relative z-50 shrink-0 flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 rounded-xl bg-gradient-to-r from-orange-500/30 to-white/15 hover:from-orange-500/45 hover:to-white/25 border border-orange-200/70 ring-1 ring-white/60 shadow-[0_0_0_1px_rgba(255,255,255,0.45),0_0_0_3px_rgba(249,115,22,0.45),0_10px_24px_rgba(249,115,22,0.28)] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.65),0_0_0_3px_rgba(249,115,22,0.65),0_12px_28px_rgba(249,115,22,0.4)] active:scale-[0.98] transition-all duration-200 min-w-0 cursor-pointer"
           >
             <img
-              src="/logo-petworld.png.jpeg"
+              src={`${import.meta.env.BASE_URL}logo-petworld.png.jpeg`}
               alt="PetWorld"
               className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-white/30 shrink-0"
               onError={(e) => {

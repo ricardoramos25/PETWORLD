@@ -14,7 +14,7 @@ function Footer() {
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <img 
-                src="/logo-petworld.png.jpeg"
+                src={`${import.meta.env.BASE_URL}logo-petworld.png.jpeg`}
                 alt="PetWorld"
                 className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
                 onError={(e) => {
