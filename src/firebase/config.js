@@ -26,14 +26,24 @@ import {
 } from "firebase/firestore"
 import { normalizeEmail, sanitizeTextInput, validateLoginInput } from "../services/authSecurity"
 
+// Valores por defecto para evitar pantalla en blanco en deploys sin .env (GitHub Pages)
+const firebaseDefaults = {
+  apiKey: "AIzaSyB6I5m11_-nZJxx4AEqXZAmM6mPRSSH0Cg",
+  authDomain: "petworld-94eb4.firebaseapp.com",
+  projectId: "petworld-94eb4",
+  storageBucket: "petworld-94eb4.firebasestorage.app",
+  messagingSenderId: "1056118883413",
+  appId: "1:1056118883413:web:08a8dc82053afb713700dc"
+}
+
 // Tu configuración de Firebase
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseDefaults.apiKey,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseDefaults.authDomain,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseDefaults.projectId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseDefaults.storageBucket,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseDefaults.messagingSenderId,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseDefaults.appId
 }
 
 // Inicializar Firebase
