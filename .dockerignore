@@ -1,0 +1,32 @@
+# Dependencies and build outputs
+node_modules
+dist
+dist-ssr
+
+# Git and editor metadata
+.git
+.gitignore
+.vscode
+.idea
+
+# Local and secret environment files
+.env
+.env.*
+
+# Optional examples (not needed in image context)
+.env.example
+.env.docker.example
+
+# Dev-only scripts/docs and local helper folders
+Dockerfile.dev
+docker-compose.yml
+start-dev.bat
+install-backend.bat
+.qodo
+backend
+README.md
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
