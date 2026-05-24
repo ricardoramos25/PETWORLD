@@ -16,12 +16,13 @@
       if (isLocalhost) {
         import("/src/main.jsx")
       } else {
+        const assetVersion = "20260524-1"
         const css = document.createElement("link")
         css.rel = "stylesheet"
-        css.href = "/PETWORLD/assets/main.css"
+        css.href = `/PETWORLD/assets/main.css?v=${assetVersion}`
         document.head.appendChild(css)
 
-        const prodEntry = "/PETWORLD/assets/" + "main2.js"
+        const prodEntry = `/PETWORLD/assets/main2.js?v=${assetVersion}`
         import(prodEntry)
       }
     </script>
