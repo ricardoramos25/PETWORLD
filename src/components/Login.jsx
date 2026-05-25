@@ -107,6 +107,7 @@ function Login({ onClose, onCambiarARegistro }) {
         
         {/* Botón de Google */}
         <button
+          type="button"
           onClick={handleGoogleLogin}
           disabled={cargando}
           className="w-full mb-4 min-h-11 flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition font-medium text-sm sm:text-base"
