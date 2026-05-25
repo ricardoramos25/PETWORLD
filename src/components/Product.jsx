@@ -51,6 +51,36 @@ const etiquetasUnidadPorProducto = new Map(
   ].map(([nombreProducto, etiqueta]) => [normalizarTexto(nombreProducto), etiqueta])
 )
 
+const getAlternateImagePath = (src) => {
+  if (typeof src !== "string") return null
+
+  if (src.includes("/PETWORLD/public/")) {
+    return src.replace("/PETWORLD/public/", "/PETWORLD/")
+  }
+
+  if (src.includes("/PETWORLD/") && !src.includes("/PETWORLD/public/")) {
+    return src.replace("/PETWORLD/", "/PETWORLD/public/")
+  }
+
+  return null
+}
+
+const manejarErrorImagen = (event, fallbackImage) => {
+  const target = event.currentTarget
+  const intentoAlterno = target.dataset.pathFallbackTried === "true"
+
+  if (!intentoAlterno) {
+    const alterna = getAlternateImagePath(target.src)
+    if (alterna && alterna !== target.src) {
+      target.dataset.pathFallbackTried = "true"
+      target.src = alterna
+      return
+    }
+  }
+
+  target.src = fallbackImage
+}
+
 function Product({ nombre, precio, imagen, onAgregar, cantidadEnCarrito = 0 }) {
   const [mostrarImagenCompleta, setMostrarImagenCompleta] = useState(false)
   const esRutaImagen =
@@ -96,9 +126,7 @@ function Product({ nombre, precio, imagen, onAgregar, cantidadEnCarrito = 0 }) {
               width="600"
               height="450"
               onClick={() => setMostrarImagenCompleta(true)}
-              onError={(e) => {
-                e.currentTarget.src = fallbackImage;
-              }}
+              onError={(e) => manejarErrorImagen(e, fallbackImage)}
             />
           </div>
         )}
@@ -145,9 +173,7 @@ function Product({ nombre, precio, imagen, onAgregar, cantidadEnCarrito = 0 }) {
             alt={nombre}
             className="max-w-full max-h-[85vh] rounded-xl shadow-2xl object-contain"
             onClick={(e) => e.stopPropagation()}
-            onError={(e) => {
-              e.currentTarget.src = fallbackImage;
-            }}
+            onError={(e) => manejarErrorImagen(e, fallbackImage)}
           />
           <button
             onClick={() => setMostrarImagenCompleta(false)}
