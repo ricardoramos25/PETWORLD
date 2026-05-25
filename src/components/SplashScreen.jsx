@@ -25,12 +25,12 @@ function SplashScreen({ onComplete }) {
         {/* Logo */}
         <div className="mb-8 animate-bounce">
           <img
-            src={`${import.meta.env.BASE_URL}logo-petworld.png.jpeg`}
+            src={`${import.meta.env.BASE_URL}public/logo-petworld.png.jpeg`}
             alt="PetWorld Logo"
             className="w-20 h-20 mx-auto mb-4 rounded-full object-cover border-4 border-white/50"
             onError={(e) => {
               const target = e.currentTarget
-              const fallback = `${import.meta.env.BASE_URL}public/logo-petworld.png.jpeg`
+              const fallback = `${import.meta.env.BASE_URL}logo-petworld.png.jpeg`
 
               if (target.dataset.pathFallbackTried !== "true" && target.src !== fallback) {
                 target.dataset.pathFallbackTried = "true"
