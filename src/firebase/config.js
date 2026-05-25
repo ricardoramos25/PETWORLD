@@ -3,10 +3,13 @@ import { initializeApp } from "firebase/app"
 import { 
   getAuth, 
   GoogleAuthProvider, 
+  getRedirectResult,
   signInWithPopup, 
   signInWithRedirect,
   signOut,
   onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword
 } from "firebase/auth"
@@ -52,6 +55,10 @@ const auth = getAuth(app)
 const db = getFirestore(app)
 const googleProvider = new GoogleAuthProvider()
 
+void setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error("No se pudo establecer la persistencia de Firebase:", error)
+})
+
 const getCurrentHost = () => {
   if (typeof window === "undefined") return "tu-dominio"
   return window.location.hostname || "tu-dominio"
@@ -65,6 +72,32 @@ const esDispositivoMovil = () => {
   const esMovilPorUserAgent = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(userAgent)
 
   return esPantallaPequena || esMovilPorUserAgent
+}
+
+const esEntornoLocal = () => {
+  if (typeof window === "undefined") return false
+  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+}
+
+const debeUsarRedirectGoogle = () => esDispositivoMovil() || !esEntornoLocal()
+
+const mapUserToAuthResult = async (user) => {
+  const userDoc = await asegurarDocumentoUsuario(user)
+
+  return {
+    exito: true,
+    usuario: {
+      id: user.uid,
+      nombre: user.displayName,
+      email: user.email,
+      foto: user.photoURL,
+      telefono: user.phoneNumber || "",
+      direccion: "",
+      ciudad: "",
+      fechaRegistro: user.metadata.creationTime,
+      puntos: userDoc.exists() ? userDoc.data().puntos : 0
+    }
+  }
 }
 
 const asegurarDocumentoUsuario = async (user) => {
@@ -149,31 +182,13 @@ const mapAuthErrorMessage = (errorCode) => {
 // ========== FUNCIONES DE AUTENTICACIÓN ==========
 export const loginWithGoogle = async () => {
   try {
-    if (esDispositivoMovil()) {
+    if (debeUsarRedirectGoogle()) {
       await signInWithRedirect(auth, googleProvider)
       return { exito: true, redireccion: true }
     }
 
     const result = await signInWithPopup(auth, googleProvider)
-    const user = result.user
-    
-    // Guardar/actualizar usuario en Firestore
-    const userDoc = await asegurarDocumentoUsuario(user)
-    
-    return {
-      exito: true,
-      usuario: {
-        id: user.uid,
-        nombre: user.displayName,
-        email: user.email,
-        foto: user.photoURL,
-        telefono: user.phoneNumber || "",
-        direccion: "",
-        ciudad: "",
-        fechaRegistro: user.metadata.creationTime,
-        puntos: userDoc.exists() ? userDoc.data().puntos : 0
-      }
-    }
+    return mapUserToAuthResult(result.user)
   } catch (error) {
     if (error?.code === "auth/popup-blocked" || error?.code === "auth/cancelled-popup-request") {
       try {
@@ -190,6 +205,24 @@ export const loginWithGoogle = async () => {
     }
 
     console.error("Error:", error)
+    return {
+      exito: false,
+      codigo: error?.code,
+      mensaje: mapAuthErrorMessage(error?.code)
+    }
+  }
+}
+
+export const resolverLoginRedirectGoogle = async () => {
+  try {
+    const result = await getRedirectResult(auth)
+    if (!result?.user) {
+      return { exito: false, sinResultado: true }
+    }
+
+    return mapUserToAuthResult(result.user)
+  } catch (error) {
+    console.error("Error procesando redirect de Google:", error)
     return {
       exito: false,
       codigo: error?.code,

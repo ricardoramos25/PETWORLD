@@ -8,7 +8,8 @@ import {
   guardarPedido,
   obtenerPedidosPorUsuario,
   registrarUsuario,
-  loginConEmail
+  loginConEmail,
+  resolverLoginRedirectGoogle
 } from "../firebase/config"
 
 const AuthContext = createContext()
@@ -29,7 +30,12 @@ export function AuthProvider({ children }) {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthChange(async (firebaseUser) => {
+    let activo = true
+    let unsubscribe = () => {}
+
+    const sincronizarUsuario = async (firebaseUser) => {
+      if (!activo) return
+
       setCargando(true)
       
       if (firebaseUser) {
@@ -49,9 +55,8 @@ export function AuthProvider({ children }) {
         }
         setUsuario(usuarioData)
 
-        // Cargar historial de pedidos
         const pedidosResult = await obtenerPedidosPorUsuario(firebaseUser.uid)
-        if (pedidosResult.exito) {
+        if (pedidosResult.exito && activo) {
           setHistorialCompras(pedidosResult.pedidos)
         }
       } else {
@@ -59,10 +64,23 @@ export function AuthProvider({ children }) {
         setHistorialCompras([])
       }
       
-      setCargando(false)
-    })
-    
-    return () => unsubscribe()
+      if (activo) {
+        setCargando(false)
+      }
+    }
+
+    const inicializarAuth = async () => {
+      await resolverLoginRedirectGoogle()
+      if (!activo) return
+      unsubscribe = onAuthChange(sincronizarUsuario)
+    }
+
+    inicializarAuth()
+
+    return () => {
+      activo = false
+      unsubscribe()
+    }
   }, [])
 
   const loginConGoogle = async () => {
