@@ -103,28 +103,14 @@ function LoginPage() {
 
         navigate("/")
       } else {
-        if (esErrorConfiguracionFirebase(resultado)) {
-          alert(resultado.mensaje || "Error de configuracion de Firebase")
-          setCargandoGoogle(false)
-          return
-        }
-
-        const state = registerFailedLoginAttempt()
-        if (state.isLocked) {
-          alert(`Demasiados intentos. Bloqueado por ${getLockTimeSeconds()}s.`)
-        } else {
-          const remaining = getRemainingAttempts()
-          alert(`${resultado.mensaje || "Error al iniciar sesion con Google"} Intentos restantes: ${remaining}.`)
-        }
+        // Mostrar diagnóstico del error para depuración
+        const codigoError = resultado?.codigo || "sin-codigo"
+        const mensajeError = resultado?.mensaje || "Error desconocido"
+        alert(`Error Google [${codigoError}]: ${mensajeError}`)
+        setCargandoGoogle(false)
       }
-    } catch {
-      const state = registerFailedLoginAttempt()
-      if (state.isLocked) {
-        alert(`Demasiados intentos. Bloqueado por ${getLockTimeSeconds()}s.`)
-      } else {
-        const remaining = getRemainingAttempts()
-        alert(`Error al iniciar sesion con Google. Intentos restantes: ${remaining}.`)
-      }
+    } catch (err) {
+      alert(`Excepción Google: ${err?.code || "sin-codigo"} - ${err?.message || err}`)
     }
     setCargandoGoogle(false)
   }
