@@ -4,10 +4,9 @@ const withBaseUrl = (ruta) => {
   if (typeof ruta !== "string") return ruta
   if (ruta.startsWith("http") || !ruta.startsWith("/")) return ruta
 
-  // GitHub Pages is currently serving static files from the root bundle,
-  // so product files are available under /productos/... paths.
+  // GitHub Pages in this repo serves static files under /public/... paths.
   if (ruta.startsWith("/productos/")) {
-    return `${import.meta.env.BASE_URL}${ruta.slice(1)}`
+    return `${import.meta.env.BASE_URL}public/${ruta.slice(1)}`
   }
 
   return `${import.meta.env.BASE_URL}${ruta.slice(1)}`
