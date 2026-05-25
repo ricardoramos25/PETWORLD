@@ -79,7 +79,12 @@ export const getLockTimeSeconds = () => Math.floor(LOCK_TIME_MS / 1000);
 
 export const sanitizeTextInput = (value, maxLength = 120) => {
   const cleaned = String(value || "")
-    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .split("")
+    .filter((char) => {
+      const code = char.charCodeAt(0)
+      return code >= 32 && code !== 127
+    })
+    .join("")
     .replace(/\s+/g, " ")
     .trim();
 

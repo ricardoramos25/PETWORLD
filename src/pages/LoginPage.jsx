@@ -117,7 +117,7 @@ function LoginPage() {
           alert(`${resultado.mensaje || "Error al iniciar sesion con Google"} Intentos restantes: ${remaining}.`)
         }
       }
-    } catch (error) {
+    } catch {
       const state = registerFailedLoginAttempt()
       if (state.isLocked) {
         alert(`Demasiados intentos. Bloqueado por ${getLockTimeSeconds()}s.`)

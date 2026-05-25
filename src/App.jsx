@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useEffect } from "react"
-import { HashRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom"
+import { HashRouter, Routes, Route, useNavigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import Navbar from "./components/Navbar"
 import Footer from "./components/footer"
@@ -15,7 +15,6 @@ import { enviarPedidoPorWhatsApp } from "./services/whatsappService"
 
 function AppContent() {
   const navigate = useNavigate()
-  const location = useLocation()
   const { usuario, agregarCompra } = useAuth() // 👈 Importamos agregarCompra
   
   const [carrito, setCarrito] = useState(() => {

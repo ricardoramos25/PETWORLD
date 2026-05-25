@@ -208,7 +208,6 @@ function WelcomePage({ onComplete }) {
     animate()
 
     // Efecto de partículas siguiendo al mouse
-    let mouseTrail = []
     setInterval(() => {
       if (mouseX !== null && mouseY !== null) {
         const trailParticle = new Particle(mouseX, mouseY)

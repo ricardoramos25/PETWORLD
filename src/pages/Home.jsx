@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
 import { useRef, useState } from "react"
-import { productos, categorias, getProductosPorCategoria } from "../data/productos"
+import { categorias, getProductosPorCategoria } from "../data/productos"
 import Product from "../components/Product"
 
 function Home({ agregarAlCarrito, carrito }) {

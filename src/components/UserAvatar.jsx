@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const getInitials = (usuario) => {
   const base = usuario?.nombre || usuario?.email || "Usuario"
@@ -32,15 +32,12 @@ const getFallbackAvatar = (usuario) => {
 function UserAvatar({ usuario, alt, className }) {
   const [imageError, setImageError] = useState(false)
 
-  useEffect(() => {
-    setImageError(false)
-  }, [usuario?.foto])
-
   const fallbackAvatar = getFallbackAvatar(usuario)
   const source = !imageError && usuario?.foto ? usuario.foto : fallbackAvatar
 
   return (
     <img
+      key={usuario?.foto || "fallback-avatar"}
       src={source}
       alt={alt}
       className={className}

@@ -13,6 +13,7 @@ import {
 
 const AuthContext = createContext()
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (!context) {
@@ -24,7 +25,7 @@ export const useAuth = () => {
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null)
   const [historialCompras, setHistorialCompras] = useState([])
-  const [listaDeseos, setListaDeseos] = useState([])
+  const [listaDeseos] = useState([])
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
