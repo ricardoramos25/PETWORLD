@@ -80,7 +80,7 @@ const esEntornoLocal = () => {
   return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
 }
 
-const debeUsarRedirectGoogle = () => esDispositivoMovil() || !esEntornoLocal()
+const debeUsarRedirectGoogle = () => esDispositivoMovil()
 
 const mapUserToAuthResult = async (user) => {
   const userDoc = await asegurarDocumentoUsuario(user)
@@ -184,19 +184,24 @@ const mapAuthErrorMessage = (errorCode) => {
 export const loginWithGoogle = async () => {
   try {
     if (debeUsarRedirectGoogle()) {
+      console.log('[Auth] Usando redirect (móvil)')
       await signInWithRedirect(auth, googleProvider)
       return { exito: true, redireccion: true }
     }
 
+    console.log('[Auth] Usando popup (desktop)')
     const result = await signInWithPopup(auth, googleProvider)
+    console.log('[Auth] Popup exitoso, uid:', result.user?.uid)
     return mapUserToAuthResult(result.user)
   } catch (error) {
+    console.error('[Auth] Error popup:', error?.code, error?.message)
     if (error?.code === "auth/popup-blocked" || error?.code === "auth/cancelled-popup-request") {
+      console.log('[Auth] Popup bloqueado, cambiando a redirect')
       try {
         await signInWithRedirect(auth, googleProvider)
         return { exito: true, redireccion: true }
       } catch (redirectError) {
-        console.error("Error en redirect de Google:", redirectError)
+        console.error('[Auth] Error redirect fallback:', redirectError)
         return {
           exito: false,
           codigo: redirectError?.code,
@@ -205,7 +210,6 @@ export const loginWithGoogle = async () => {
       }
     }
 
-    console.error("Error:", error)
     return {
       exito: false,
       codigo: error?.code,
@@ -216,14 +220,16 @@ export const loginWithGoogle = async () => {
 
 export const resolverLoginRedirectGoogle = async () => {
   try {
+    console.log('[Auth] Verificando resultado de redirect...')
     const result = await getRedirectResult(auth)
     if (!result?.user) {
+      console.log('[Auth] No hay resultado de redirect pendiente')
       return { exito: false, sinResultado: true }
     }
-
+    console.log('[Auth] Redirect exitoso, uid:', result.user?.uid)
     return mapUserToAuthResult(result.user)
   } catch (error) {
-    console.error("Error procesando redirect de Google:", error)
+    console.error('[Auth] Error getRedirectResult:', error?.code, error?.message)
     return {
       exito: false,
       codigo: error?.code,

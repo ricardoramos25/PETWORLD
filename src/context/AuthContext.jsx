@@ -70,7 +70,8 @@ export function AuthProvider({ children }) {
     }
 
     const inicializarAuth = async () => {
-      await resolverLoginRedirectGoogle()
+      const redirectResult = await resolverLoginRedirectGoogle()
+      console.log('[AuthContext] redirectResult:', redirectResult)
       if (!activo) return
       unsubscribe = onAuthChange(sincronizarUsuario)
     }

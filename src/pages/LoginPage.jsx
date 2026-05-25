@@ -92,18 +92,18 @@ function LoginPage() {
     setCargandoGoogle(true)
     try {
       const resultado = await loginConGoogle()
+      console.log('[LoginPage] resultado loginConGoogle:', resultado)
       if (resultado.exito) {
         clearFailedLoginAttempts()
 
-        // En flujo redirect, Firebase completa el login al volver al sitio.
         if (resultado.redireccion) {
+          // Cambiará de página sola al volver del redirect
           setCargandoGoogle(false)
           return
         }
 
         navigate("/")
       } else {
-        // Mostrar diagnóstico del error para depuración
         const codigoError = resultado?.codigo || "sin-codigo"
         const mensajeError = resultado?.mensaje || "Error desconocido"
         alert(`Error Google [${codigoError}]: ${mensajeError}`)
