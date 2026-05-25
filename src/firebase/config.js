@@ -54,6 +54,7 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = getFirestore(app)
 const googleProvider = new GoogleAuthProvider()
+googleProvider.setCustomParameters({ prompt: "select_account" })
 
 void setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("No se pudo establecer la persistencia de Firebase:", error)
