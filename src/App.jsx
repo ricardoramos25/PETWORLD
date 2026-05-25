@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useEffect } from "react"
-import { HashRouter, Routes, Route, useNavigate } from "react-router-dom"
+import { HashRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import Navbar from "./components/Navbar"
 import Footer from "./components/footer"
@@ -14,8 +14,10 @@ import WelcomePage from "./components/WelcomePage"
 import { enviarPedidoPorWhatsApp } from "./services/whatsappService"
 
 function AppContent() {
+  const location = useLocation()
   const navigate = useNavigate()
   const { usuario, agregarCompra } = useAuth() // 👈 Importamos agregarCompra
+  const esRutaPrincipal = location.pathname === "/"
   
   const [carrito, setCarrito] = useState(() => {
     const data = localStorage.getItem("carrito")
@@ -27,8 +29,8 @@ function AppContent() {
   const [mostrarCarrito, setMostrarCarrito] = useState(false)
   const [mostrarMetodoPago, setMostrarMetodoPago] = useState(false)
   const [notificacion, setNotificacion] = useState(null)
-  const [mostrarSplash, setMostrarSplash] = useState(true)
-  const [mostrarWelcome, setMostrarWelcome] = useState(true)
+  const [mostrarSplash, setMostrarSplash] = useState(() => esRutaPrincipal)
+  const [mostrarWelcome, setMostrarWelcome] = useState(() => esRutaPrincipal)
   const [procesando, setProcesando] = useState(false)
   const [mostrarModalExito, setMostrarModalExito] = useState(false)
 
@@ -191,11 +193,11 @@ function AppContent() {
     setMostrarMetodoPago(true)
   }
 
-  if (mostrarSplash) {
+  if (esRutaPrincipal && mostrarSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />
   }
 
-  if (mostrarWelcome) {
+  if (esRutaPrincipal && mostrarWelcome) {
     return <WelcomePage onComplete={() => setMostrarWelcome(false)} />
   }
 
