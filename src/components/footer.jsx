@@ -14,12 +14,21 @@ function Footer() {
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
               <img 
-                src={`${import.meta.env.BASE_URL}public/logo-petworld.png.jpeg`}
+                src={`${import.meta.env.BASE_URL}logo-petworld.png.jpeg`}
                 alt="PetWorld"
                 className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
                 onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.parentElement.innerHTML = '<span class="text-3xl">🐾</span>'
+                  const target = e.currentTarget
+                  const fallback = `${import.meta.env.BASE_URL}logo-petworld.png.jpeg`
+
+                  if (target.dataset.pathFallbackTried !== "true" && target.src !== fallback) {
+                    target.dataset.pathFallbackTried = "true"
+                    target.src = fallback
+                    return
+                  }
+
+                  target.style.display = 'none'
+                  target.parentElement.innerHTML = '<span class="text-3xl">🐾</span>'
                 }}
               />
               <span className="text-xl font-bold">PetWorld</span>

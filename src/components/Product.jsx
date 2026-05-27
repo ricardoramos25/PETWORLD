@@ -54,12 +54,14 @@ const etiquetasUnidadPorProducto = new Map(
 const getAlternateImagePath = (src) => {
   if (typeof src !== "string") return null
 
-  if (src.includes("/PETWORLD/public/")) {
-    return src.replace("/PETWORLD/public/", "/PETWORLD/")
+  if (src.includes("/public/")) {
+    return src.replace("/public/", "/")
   }
 
-  if (src.includes("/PETWORLD/") && !src.includes("/PETWORLD/public/")) {
-    return src.replace("/PETWORLD/", "/PETWORLD/public/")
+  if (src.includes("/productos/")) {
+    const url = new URL(src)
+    url.pathname = `/public${url.pathname}`
+    return url.toString()
   }
 
   return null
