@@ -8,23 +8,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module">
-      const isLocalhost =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-
-      if (isLocalhost) {
-        import("/src/main.jsx")
-      } else {
-        const assetVersion = "20260525-6"
-        const css = document.createElement("link")
-        css.rel = "stylesheet"
-        css.href = `/PETWORLD/assets/main.css?v=${assetVersion}`
-        document.head.appendChild(css)
-
-        const prodEntry = `/PETWORLD/assets/main2.js?v=${assetVersion}`
-        import(prodEntry)
-      }
-    </script>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
