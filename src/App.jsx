@@ -11,6 +11,7 @@ import RegistroPage from "./pages/RegistroPage"
 import SplashScreen from "./components/SplashScreen"
 import MetodoPago from "./components/MetodoPago"
 import WelcomePage from "./components/WelcomePage"
+import PromoStrip from "./components/PromoStrip"
 import { enviarPedidoPorWhatsApp } from "./services/whatsappService"
 
 function AppContent() {
@@ -229,6 +230,8 @@ function AppContent() {
           carrito={carrito}
           abrirCarrito={() => setMostrarCarrito(true)}
         />
+
+        {esRutaPrincipal && <PromoStrip />}
 
         <main className="flex-grow">
           <Routes>

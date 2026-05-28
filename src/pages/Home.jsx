@@ -49,12 +49,12 @@ function Home({ agregarAlCarrito, carrito }) {
       />
       {/* Content */}
       <div className="relative z-10 px-4 py-5 sm:p-6">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-5 sm:mb-6 text-white">Productos PetWorld</h2>
+        <div className="mb-5 sm:mb-6" aria-hidden="true" />
       
       {/* Buscador */}
-      <div className="mb-5 sm:mb-6 sticky top-[72px] z-30 md:static md:top-auto md:z-auto bg-black/40 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 rounded-xl md:rounded-none p-3 md:p-0 border border-orange-500/20 md:border-0">
-        <div className="relative max-w-md w-full">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <div className="mb-5 sm:mb-6 sticky top-[72px] z-30 md:static md:top-auto md:z-auto rounded-2xl p-3 sm:p-4 bg-gradient-to-r from-black/70 via-gray-900/75 to-black/70 border border-orange-500/35 shadow-[0_8px_30px_rgba(249,115,22,0.18)] backdrop-blur-xl">
+        <div className="relative max-w-xl w-full">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <svg className="h-5 w-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -64,10 +64,10 @@ function Home({ agregarAlCarrito, carrito }) {
             placeholder="Buscar productos..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-orange-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 bg-black/50 text-white placeholder-orange-200 backdrop-blur-sm text-sm sm:text-base"
+            className="w-full pl-12 pr-11 py-3.5 border border-orange-400/35 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-400/70 focus:border-orange-300 bg-gradient-to-r from-black/65 to-gray-900/70 text-white placeholder-orange-200/90 backdrop-blur-sm text-sm sm:text-base shadow-inner shadow-orange-500/10"
           />
           {busqueda && (
-            <button onClick={() => setBusqueda("")} className="absolute inset-y-0 right-0 pr-3 flex items-center text-orange-300 hover:text-orange-100">
+            <button onClick={() => setBusqueda("")} className="absolute inset-y-0 right-0 pr-4 flex items-center text-orange-300 hover:text-orange-100 transition-colors">
               ✖
             </button>
           )}
@@ -83,9 +83,6 @@ function Home({ agregarAlCarrito, carrito }) {
               </div>
             ) : (
               <div>
-                <p className="text-xs text-orange-300 mb-3">
-                  {productosFiltrados.length} resultado(s)
-                </p>
                 <div className="space-y-2 max-h-96 overflow-y-auto">
                   {productosFiltrados.map(producto => (
                     <div
@@ -141,11 +138,12 @@ function Home({ agregarAlCarrito, carrito }) {
       <div ref={productosSectionRef} className="mb-5 scroll-mt-24">
         <button
           onClick={() => setCategoriasAbiertas(prev => !prev)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-black/50 border border-orange-500/30 text-orange-200 hover:bg-orange-900/30 hover:border-orange-500 transition-all font-semibold text-sm"
+          className="group flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-orange-500/20 via-black/60 to-orange-500/10 border border-orange-400/35 text-orange-100 hover:from-orange-500/30 hover:to-orange-500/20 hover:border-orange-300 transition-all font-semibold text-sm shadow-[0_6px_20px_rgba(249,115,22,0.2)]"
         >
-          <span>📁 Categorías</span>
+          <span className="text-base">📁</span>
+          <span>Categorías</span>
           <svg
-            className={`w-4 h-4 transition-transform duration-300 ${categoriasAbiertas ? "rotate-180" : ""}`}
+            className={`w-4 h-4 transition-transform duration-300 ${categoriasAbiertas ? "rotate-180" : "group-hover:translate-y-0.5"}`}
             fill="none" stroke="currentColor" viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -189,9 +187,6 @@ function Home({ agregarAlCarrito, carrito }) {
             </div>
           ) : (
             <div>
-              <p className="text-sm text-orange-300 mb-4">
-                {productosFiltrados.length} producto(s) encontrado(s)
-              </p>
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 auto-rows-fr">
                 {productosFiltrados.map(producto => (
                   <Product
