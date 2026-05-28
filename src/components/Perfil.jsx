@@ -1,11 +1,11 @@
 // src/components/Perfil.jsx (agrega la foto de perfil)
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
 import HistorialCompras from "./HistorialCompras"
 import UserAvatar from "./UserAvatar"
 
-function Perfil({ onClose }) {
+function Perfil({ onClose, enfoqueInicial = null }) {
   const { usuario, logout, actualizarPerfil, historialCompras } = useAuth()
   const [modoEdicion, setModoEdicion] = useState(false)
   const [nombre, setNombre] = useState(usuario?.nombre || "")
@@ -14,7 +14,21 @@ function Perfil({ onClose }) {
   const [mensaje, setMensaje] = useState("")
   const [mostrarHistorial, setMostrarHistorial] = useState(false)
   const [guardando, setGuardando] = useState(false)
+  const direccionRef = useRef(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (enfoqueInicial !== "direccion") return
+
+    setModoEdicion(true)
+
+    const timer = setTimeout(() => {
+      direccionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      direccionRef.current?.focus()
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [enfoqueInicial])
 
   const handleGuardar = async () => {
     if (guardando) return
@@ -134,6 +148,7 @@ function Perfil({ onClose }) {
               </div>
               {modoEdicion ? (
                 <textarea
+                  ref={direccionRef}
                   value={direccion}
                   onChange={(e) => setDireccion(e.target.value)}
                   className="w-full p-2 border rounded-lg"

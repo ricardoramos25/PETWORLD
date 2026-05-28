@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import Perfil from "./Perfil"
 import UserAvatar from "./UserAvatar"
 import { guardarConsultaMedica } from "../firebase/config"
@@ -13,7 +13,9 @@ function Navbar({ carrito, abrirCarrito }) {
   const { usuario, estaAutenticado } = useAuth()
   const [mostrarPerfil, setMostrarPerfil] = useState(false)
   const [mostrarRedes, setMostrarRedes] = useState(false)
+  const [enfoquePerfil, setEnfoquePerfil] = useState(null)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0)
   const totalPrecio = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
@@ -67,6 +69,18 @@ function Navbar({ carrito, abrirCarrito }) {
       )
     }
   ]
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const openProfile = params.get("openProfile")
+
+    if (openProfile === "direccion" && estaAutenticado) {
+      setEnfoquePerfil("direccion")
+      setMostrarPerfil(true)
+
+      navigate(location.pathname, { replace: true })
+    }
+  }, [location.pathname, location.search, navigate, estaAutenticado])
 
   const handleConsultaMedica = async () => {
     if (!ADMIN_WHATSAPP) {
@@ -216,7 +230,13 @@ function Navbar({ carrito, abrirCarrito }) {
       </nav>
       
       {mostrarPerfil && (
-        <Perfil onClose={() => setMostrarPerfil(false)} />
+        <Perfil
+          onClose={() => {
+            setMostrarPerfil(false)
+            setEnfoquePerfil(null)
+          }}
+          enfoqueInicial={enfoquePerfil}
+        />
       )}
     </>
   )

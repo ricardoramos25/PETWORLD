@@ -119,7 +119,7 @@ function AppContent() {
     if (!usuario.direccion || usuario.direccion === "") {
       mostrarNotificacion("Agrega tu dirección en el perfil 📍", "error")
       setMostrarCarrito(false)
-      navigate("/perfil")
+      navigate("/?openProfile=direccion")
       return
     }
     
