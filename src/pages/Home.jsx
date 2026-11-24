@@ -114,17 +114,7 @@ function Home({ agregarAlCarrito, carrito }) {
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-white font-medium truncate">{producto.nombre}</p>
-                        <p className="text-xs text-orange-300">L {producto.precio}</p>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          agregarAlCarrito(producto)
-                        }}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition"
-                      >
-                        +🛒
-                      </button>
                     </div>
                   ))}
                 </div>

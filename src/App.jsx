@@ -1,15 +1,10 @@
 // src/App.jsx
 import { useState, useEffect } from "react"
 import { HashRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom"
-import { AuthProvider, useAuth } from "./context/AuthContext"
 import Navbar from "./components/Navbar"
 import Footer from "./components/footer"
 import Home from "./pages/Home"
-import Carrito from "./components/Carrito"
-import LoginPage from "./pages/LoginPage"
-import RegistroPage from "./pages/RegistroPage"
 import SplashScreen from "./components/SplashScreen"
-import MetodoPago from "./components/MetodoPago"
 import WelcomePage from "./components/WelcomePage"
 import PromoStrip from "./components/PromoStrip"
 import { enviarPedidoPorWhatsApp } from "./services/whatsappService"
@@ -17,7 +12,6 @@ import { enviarPedidoPorWhatsApp } from "./services/whatsappService"
 function AppContent() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { usuario, agregarCompra } = useAuth() // 👈 Importamos agregarCompra
   const esRutaPrincipal = location.pathname === "/"
   
   const [carrito, setCarrito] = useState(() => {
@@ -27,8 +21,6 @@ function AppContent() {
     return parsed.map(item => ({ ...item, cantidad: item.cantidad || 1 }))
   })
 
-  const [mostrarCarrito, setMostrarCarrito] = useState(false)
-  const [mostrarMetodoPago, setMostrarMetodoPago] = useState(false)
   const [notificacion, setNotificacion] = useState(null)
   const [mostrarSplash, setMostrarSplash] = useState(() => esRutaPrincipal)
   const [mostrarWelcome, setMostrarWelcome] = useState(() => esRutaPrincipal)
@@ -100,98 +92,32 @@ function AppContent() {
     setCarrito(prev => prev.filter(item => item.id !== id))
   }
 
-  // 👇 FUNCIÓN MODIFICADA PARA FINALIZAR COMPRA CON GUARDADO Y WHATSAPP
-  const finalizarCompra = async (metodoPagoId) => {
+  // 👇 FUNCIÓN MODIFICADA PARA FINALIZAR COMPRA CON WHATSAPP
+  const finalizarCompra = async () => {
     if (carrito.length === 0) {
-      mostrarNotificacion("Tu carrito está vacío ⚠️", "error")
+      mostrarNotificacion("No hay productos seleccionados ⚠️", "error")
       return
     }
-    
-    // Verificar si el usuario está autenticado
-    if (!usuario) {
-      mostrarNotificacion("Inicia sesión para continuar 🔑", "error")
-      setMostrarCarrito(false)
-      navigate("/login")
-      return
-    }
-    
-    // Verificar que el usuario tenga dirección
-    if (!usuario.direccion || usuario.direccion === "") {
-      mostrarNotificacion("Agrega tu dirección en el perfil 📍", "error")
-      setMostrarCarrito(false)
-      navigate("/?openProfile=direccion")
-      return
-    }
-    
-    // Métodos de pago
-    const metodosPago = {
-      1: "💵 Efectivo contra entrega",
-      2: "🏦 Transferencia bancaria",
-      3: "💳 Tarjeta de crédito/débito",
-      4: "📱 Pago por WhatsApp"
-    }
-    
-    const metodoPagoTexto = metodosPago[metodoPagoId] || "Efectivo contra entrega"
-    const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
-    
-    setProcesando(true)
-    
-    // Guardar pedido en Firebase
-    const resultado = await agregarCompra(carrito, total, metodoPagoTexto)
-    
-    if (resultado.exito) {
-      // Preparar datos del pedido para WhatsApp
-      const pedidoData = {
-        id: resultado.id,
-        productos: carrito,
-        total: total,
-        metodoPago: metodoPagoTexto
-      }
-      
-      // Abrir WhatsApp con enlace wa.me al administrador
-      try {
-        const whatsappResult = await enviarPedidoPorWhatsApp(pedidoData, usuario)
-        
-        if (whatsappResult.success) {
-          mostrarNotificacion("✅ Compra guardada y WhatsApp abierto", "success")
-        } else {
-          mostrarNotificacion(`Compra guardada, pero no se pudo abrir WhatsApp: ${whatsappResult.message}`, "error")
-        }
-      } catch (whatsappError) {
-        console.error('Error con WhatsApp:', whatsappError)
-        mostrarNotificacion("Compra guardada, abre WhatsApp manualmente", "error")
-      }
-      
-      setMostrarModalExito(true)
-      
-      // Limpiar carrito
-      setCarrito([])
-      localStorage.removeItem("carrito")
-      setMostrarCarrito(false)
-      setMostrarMetodoPago(false)
-      navigate("/", { replace: true })
-    } else {
-      mostrarNotificacion("Error al guardar el pedido ❌", "error")
-    }
-    
-    setProcesando(false)
-  }
 
-  // 👇 FUNCIÓN PARA ABRIR MODAL DE MÉTODO DE PAGO
-  const abrirMetodoPago = () => {
-    if (carrito.length === 0) {
-      mostrarNotificacion("Tu carrito está vacío ⚠️", "error")
-      return
+    setProcesando(true)
+
+    try {
+      const whatsappResult = await enviarPedidoPorWhatsApp({ productos: carrito }, null)
+
+      if (whatsappResult.success) {
+        mostrarNotificacion("✅ WhatsApp abierto con tus productos", "success")
+        setMostrarModalExito(true)
+        setCarrito([])
+        localStorage.removeItem("carrito")
+      } else {
+        mostrarNotificacion(`No se pudo abrir WhatsApp: ${whatsappResult.message}`, "error")
+      }
+    } catch (error) {
+      console.error("Error con WhatsApp:", error)
+      mostrarNotificacion("Abre WhatsApp manualmente para enviar los productos", "error")
     }
-    
-    if (!usuario) {
-      mostrarNotificacion("Inicia sesión para continuar 🔑", "error")
-      setMostrarCarrito(false)
-      navigate("/login")
-      return
-    }
-    
-    setMostrarMetodoPago(true)
+
+    setProcesando(false)
   }
 
   if (esRutaPrincipal && mostrarSplash) {
@@ -227,8 +153,7 @@ function AppContent() {
       {/* Contenido */}
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar 
-          carrito={carrito}
-          abrirCarrito={() => setMostrarCarrito(true)}
+          enviarSeleccionados={finalizarCompra}
         />
 
         {esRutaPrincipal && <PromoStrip />}
@@ -244,37 +169,11 @@ function AppContent() {
                 />
               } 
             />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/registro" element={<RegistroPage />} />
           </Routes>
         </main>
         
         <Footer />
       </div>
-      
-      {/* Modal del carrito */}
-      {mostrarCarrito && (
-        <Carrito 
-          carrito={carrito}
-          eliminarDelCarrito={eliminarDelCarrito}
-          finalizarCompra={abrirMetodoPago}
-          aumentarCantidad={aumentarCantidad}
-          disminuirCantidad={disminuirCantidad}
-          cerrarCarrito={() => setMostrarCarrito(false)}
-        />
-      )}
-      
-      {/* Modal de método de pago */}
-      {mostrarMetodoPago && (
-        <MetodoPago
-          onSelect={(metodoId) => {
-            setMostrarMetodoPago(false)
-            finalizarCompra(metodoId)
-          }}
-          onClose={() => setMostrarMetodoPago(false)}
-          procesando={procesando}
-        />
-      )}
       
       {/* Modal de éxito de compra */}
       {mostrarModalExito && (
@@ -313,9 +212,7 @@ function AppContent() {
 function App() {
   return (
     <HashRouter>
-      <AuthProvider>
         <AppContent />
-      </AuthProvider>
     </HashRouter>
   )
 }

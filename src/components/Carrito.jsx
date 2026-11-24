@@ -81,9 +81,6 @@ function Carrito({
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-semibold text-white">{item.nombre}</h3>
-                      <p className="text-orange-400 text-sm mt-1">
-                        L {item.precio} c/u
-                      </p>
                     </div>
                     <button 
                       onClick={() => eliminarDelCarrito(item.id)}
@@ -112,50 +109,19 @@ function Carrito({
                         ➕
                       </button>
                     </div>
-                    <p className="font-bold text-white">
-                      L {item.precio * item.cantidad}
-                    </p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Resumen y total */}
+            {/* Botón de envío por WhatsApp */}
             <div className="border-t border-white/10 p-4 sm:p-5 bg-gray-800/30 pb-8 sm:pb-5">
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>Subtotal</span>
-                  <span>L {total}</span>
-                </div>
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>Envío</span>
-                  <span>Por calcular</span>
-                </div>
-                <div className="flex justify-between text-lg font-bold text-white pt-2 border-t border-white/10">
-                  <span>Total</span>
-                  <span className="text-orange-400">L {total}</span>
-                </div>
-              </div>
-
               <button
                 onClick={handleFinalizarCompra}
                 disabled={enviando}
-                className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
-                  enviando 
-                    ? "bg-gray-600 cursor-not-allowed" 
-                    : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg"
-                } text-white`}
+                className="w-full py-3 rounded-xl font-semibold bg-green-500 hover:bg-green-600 shadow-lg text-white disabled:bg-gray-600"
               >
-                {enviando ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Procesando...
-                  </>
-                ) : (
-                  <>
-                    🧾 Finalizar compra
-                  </>
-                )}
+                {enviando ? "Enviando..." : "Enviar tus productos seleccionados"}
               </button>
 
               <button

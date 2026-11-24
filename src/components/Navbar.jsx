@@ -1,24 +1,10 @@
 // src/components/Navbar.jsx
-import { useEffect, useState } from "react"
-import { useAuth } from "../context/AuthContext"
-import { useLocation, useNavigate } from "react-router-dom"
-import Perfil from "./Perfil"
-import UserAvatar from "./UserAvatar"
-import { guardarConsultaMedica } from "../firebase/config"
-import { abrirWhatsAppUrl } from "../services/whatsappService"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
-const ADMIN_WHATSAPP = (import.meta.env.VITE_WHATSAPP_ADMIN_NUMBER || "50499288926").replace(/\D/g, "")
-
-function Navbar({ carrito, abrirCarrito }) {
-  const { usuario, estaAutenticado } = useAuth()
-  const [mostrarPerfil, setMostrarPerfil] = useState(false)
+function Navbar({ enviarSeleccionados }) {
   const [mostrarRedes, setMostrarRedes] = useState(false)
-  const [enfoquePerfil, setEnfoquePerfil] = useState(null)
   const navigate = useNavigate()
-  const location = useLocation()
-
-  const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0)
-  const totalPrecio = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0)
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" })
@@ -69,36 +55,6 @@ function Navbar({ carrito, abrirCarrito }) {
       )
     }
   ]
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    const openProfile = params.get("openProfile")
-
-    if (openProfile === "direccion" && estaAutenticado) {
-      setEnfoquePerfil("direccion")
-      setMostrarPerfil(true)
-
-      navigate(location.pathname, { replace: true })
-    }
-  }, [location.pathname, location.search, navigate, estaAutenticado])
-
-  const handleConsultaMedica = async () => {
-    if (!ADMIN_WHATSAPP) {
-      alert("Falta configurar VITE_WHATSAPP_ADMIN_NUMBER para enviar mensajes por WhatsApp")
-      return
-    }
-
-    // Guardar en base de datos
-    if (estaAutenticado && usuario) {
-      await guardarConsultaMedica(usuario.id, usuario.nombre, usuario.email)
-    }
-    
-    // Abrir WhatsApp
-    const mensaje = `Buen Dia tengo una consulta sobre mi compra`
-    const mensajeCodificado = encodeURIComponent(mensaje)
-    abrirWhatsAppUrl(`https://wa.me/${ADMIN_WHATSAPP}?text=${mensajeCodificado}`)
-    navigate("/")
-  }
 
   return (
     <>
@@ -161,7 +117,7 @@ function Navbar({ carrito, abrirCarrito }) {
                 target.nextSibling.style.display = 'flex'
               }}
             />
-            <div className="min-w-0 text-left">
+            <div className="hidden sm:block min-w-0 text-left">
               <span className="block text-lg sm:text-2xl font-bold truncate leading-none">PETWORLD</span>
               <span className="flex items-center gap-1 text-[11px] text-gray-100/95">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -172,72 +128,21 @@ function Navbar({ carrito, abrirCarrito }) {
             </div>
           </button>
 
-          <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-          {estaAutenticado ? (
-            <button
-              onClick={() => setMostrarPerfil(true)}
-              className="bg-purple-500 p-2 sm:px-3 sm:py-2 rounded-lg hover:bg-purple-600 transition flex items-center gap-2"
-            >
-              <UserAvatar usuario={usuario} alt="Avatar" className="w-6 h-6 rounded-full object-cover" />
-              <span className="text-sm truncate hidden sm:inline">{usuario?.nombre?.split(" ")[0]}</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate("/login")}
-              className="bg-gray-700 p-2 sm:px-3 sm:py-2 rounded-lg hover:bg-gray-600 transition flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-              </svg>
-              <span className="hidden sm:inline">Iniciar sesión</span>
-            </button>
-          )}
-          
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto min-w-0">
           <button
-            onClick={handleConsultaMedica}
-            className="relative inline-flex items-center gap-2 p-2 sm:px-3.5 sm:py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-400 via-green-500 to-lime-500 text-gray-900 shadow-[0_0_20px_rgba(34,197,94,0.45)] ring-1 ring-emerald-200/40 hover:scale-105 hover:shadow-[0_0_28px_rgba(34,197,94,0.65)] active:scale-95 transition-all duration-300"
-            title="Consulta sobre su compra"
+            onClick={enviarSeleccionados}
+            className="relative min-w-0 max-w-[170px] sm:max-w-[280px] inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 py-2 sm:px-3.5 rounded-xl text-[11px] sm:text-sm font-semibold leading-tight text-center bg-gradient-to-r from-emerald-400 via-green-500 to-lime-500 text-gray-900 shadow-[0_0_20px_rgba(34,197,94,0.45)] ring-1 ring-emerald-200/40 hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(34,197,94,0.65)] active:scale-95 transition-all duration-300"
+            title="Enviar tus productos seleccionados"
           >
-            <span className="text-base animate-bounce">🩺</span>
-            <span className="hidden sm:block leading-tight text-left">
-              <span className="block">Consulta sobre su compra</span>
-              <span className="block text-[10px] font-medium text-gray-800/80">Respuesta por WhatsApp</span>
+            <span className="text-base shrink-0" aria-hidden="true">📤</span>
+            <span className="min-w-0 whitespace-normal leading-tight">
+              <span className="block">Enviar tus productos seleccionados</span>
+              <span className="block text-[9px] sm:text-[10px] font-medium text-gray-800/80">WhatsApp</span>
             </span>
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-lime-200 opacity-75 animate-ping"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-lime-100"></span>
-            </span>
-          </button>
-          
-          <button 
-            onClick={abrirCarrito}
-            className="relative bg-blue-500 p-2 sm:px-3 sm:py-2 rounded-lg hover:bg-blue-600 transition flex items-center gap-2"
-          >
-            🛒
-            {totalItems > 0 && (
-              <>
-                <span className="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
-                  {totalItems}
-                </span>
-                <span className="hidden sm:inline text-sm">
-                  L {totalPrecio}
-                </span>
-              </>
-            )}
           </button>
           </div>
         </div>
       </nav>
-      
-      {mostrarPerfil && (
-        <Perfil
-          onClose={() => {
-            setMostrarPerfil(false)
-            setEnfoquePerfil(null)
-          }}
-          enfoqueInicial={enfoquePerfil}
-        />
-      )}
     </>
   )
 }
