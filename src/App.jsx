@@ -8,6 +8,7 @@ import SplashScreen from "./components/SplashScreen"
 import WelcomePage from "./components/WelcomePage"
 import PromoStrip from "./components/PromoStrip"
 import { enviarPedidoPorWhatsApp } from "./services/whatsappService"
+import { productos } from "./data/productos"
 
 function AppContent() {
   const location = useLocation()
@@ -119,6 +120,41 @@ function AppContent() {
 
     setProcesando(false)
   }
+
+  useEffect(() => {
+    document.title = "PETWORLD Honduras | Productos veterinarios en Tegucigalpa"
+
+    const description = document.querySelector('meta[name="description"]') || document.createElement("meta")
+    description.setAttribute("name", "description")
+    description.setAttribute("content", "PETWORLD en Tegucigalpa, Honduras. Productos veterinarios, medicamentos, shampoo, antipulgas, vitaminas y cuidado para perros y gatos.")
+    if (!description.parentNode) document.head.appendChild(description)
+
+    const existing = document.getElementById("petworld-product-schema")
+    if (existing) existing.remove()
+
+    const itemList = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "Catálogo veterinario PETWORLD Honduras",
+      itemListElement: productos.map((producto, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: producto.nombre,
+          category: producto.categoria,
+          image: new URL(producto.imagen, window.location.origin).href,
+          description: `${producto.nombre} disponible en PETWORLD, Tegucigalpa, Honduras.`
+        }
+      }))
+    }
+
+    const script = document.createElement("script")
+    script.id = "petworld-product-schema"
+    script.type = "application/ld+json"
+    script.textContent = JSON.stringify(itemList)
+    document.head.appendChild(script)
+  }, [])
 
   if (esRutaPrincipal && mostrarSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />

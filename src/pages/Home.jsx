@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
 import { useRef, useState } from "react"
-import { categorias, getProductosPorCategoria } from "../data/productos"
+import { categorias, getProductosPorCategoria, productos } from "../data/productos"
 import Product from "../components/Product"
 
 function Home({ agregarAlCarrito, carrito }) {
@@ -193,6 +193,18 @@ function Home({ agregarAlCarrito, carrito }) {
             </div>
           )}
         </div>
+
+        <section className="sr-only" aria-label="Catálogo veterinario PETWORLD Honduras">
+          <h2>Productos veterinarios disponibles en PETWORLD Tegucigalpa Honduras</h2>
+          <p>
+            PETWORLD ofrece medicamentos, shampoos, cremas, antipulgas, vitaminas, accesorios y cuidado para perros y gatos en Honduras.
+          </p>
+          <ul>
+            {productos.map((producto) => (
+              <li key={producto.id}>{producto.nombre}</li>
+            ))}
+          </ul>
+        </section>
       </div>
     </div>
   )
