@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://petworld-pearl.vercel.app/sitemap.xml
